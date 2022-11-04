@@ -4,11 +4,21 @@ const Context = React.createContext()
 
 function ContextProvider(props) {
 
-    const [num, setNum] = useState("")
-    const [res, setRes] = useState("")
+    const [calc, setCalc] = useState({
+        number1: "",
+        number2: "",
+        sign: "",
+        result: 0
+    })
+    const [signClicked, setSignClicked] = useState(false)
 
     return (
-        <Context.Provider value={{num, setNum, res, setRes}}>
+        <Context.Provider value={{
+            calc,
+            setCalc,
+            signClicked,
+            setSignClicked
+        }}>
             {props.children}
         </Context.Provider>
     )
