@@ -33,6 +33,15 @@ function Button(props) {
         const { number1, number2, sign } = calc
         calculate(number1, number2, sign)
         setEqualClicked(true)
+        setSignClicked(false)
+        setCalc(prevCalc => {
+            return ({
+                ...prevCalc,
+                number1: prevCalc.result,
+                number2: "",
+                sign: ""
+            })
+        })
     }
     const signClickHandler = (value) => {
         setSignClicked(true)
@@ -42,11 +51,12 @@ function Button(props) {
                 sign: value
             })
         })
+        if(equalClicked) {setEqualClicked(false)}
     }
     const commaClickHandler = () => {
         console.log("comma")
     }
-    const numClickHandler = (value) => {
+    const numClickHandler = (event,value) => {
         if (!signClicked) {
             setCalc(prevCalc => {
                 return ({
@@ -62,7 +72,6 @@ function Button(props) {
                 })
             })
         }
-        console.log(calc)
     }
 
 
@@ -100,7 +109,7 @@ function Button(props) {
         <button
             className={`bg-blue-300 text-white text-3xl h-[60px] w-[60px] rounded ${value === "=" ? "col-span-2 w-[124px] bg-orange-300" : ""}`}
             onClick={
-                () => value === "C" ? resetClickHandler()
+                (event) => value === "C" ? resetClickHandler()
                     : value === "+-" ? invertClickHandler()
                         : value === "%" ? percentClickHandler()
                             : value === "=" ? equalsClickHandler()
@@ -109,7 +118,7 @@ function Button(props) {
                                         : value === "-" ? signClickHandler(value)
                                             : value === "+" ? signClickHandler(value)
                                                 : value === "." ? commaClickHandler()
-                                                    : numClickHandler(value)
+                                                    : numClickHandler(event,value)
             }
         >
             {value}
