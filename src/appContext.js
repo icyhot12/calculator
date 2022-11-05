@@ -12,7 +12,10 @@ function ContextProvider(props) {
     })
     const [signClicked, setSignClicked] = useState(false)
     const [equalClicked, setEqualClicked] = useState(false)
-
+    const [screen, setScreen] = useState("")
+    
+    const { number1, number2, result } = calc
+    
     const resetClickHandler = () => {
         setCalc({
             number1: "0",
@@ -56,7 +59,7 @@ function ContextProvider(props) {
         }
     }
 
-    const numClickHandler = (event, value) => {
+    const numClickHandler = (value) => {
         if (!signClicked) {
             setCalc(prevCalc => ({ ...prevCalc, number1: prevCalc.number1 + value }))
         } else {
@@ -85,12 +88,30 @@ function ContextProvider(props) {
             result = value1 - value2
             showResult(result)
         }
-
     }
 
     function showResult(value) {
         setCalc(prevCalc => ({ ...prevCalc, result: value }))
     }
+
+    function clearValue(value) {
+        let clearedValue = value.toString().replace(/^0+(?!\.|$)/, '').slice(0, 9)
+        return clearedValue
+    }
+
+
+    useEffect(() => {
+        if (!signClicked) {
+            setScreen(clearValue(number1))
+        } else if (signClicked && !equalClicked && number2.length < 1) {
+            setScreen(clearValue(number1))
+        } else if (signClicked && !equalClicked) {
+            setScreen(clearValue(number2))
+        } else if (equalClicked) {
+            setScreen(clearValue(result))
+        }
+    }, [calc])
+
 
     return (
         <Context.Provider value={{
@@ -104,7 +125,8 @@ function ContextProvider(props) {
             equalsClickHandler,
             signClickHandler,
             commaClickHandler,
-            numClickHandler
+            numClickHandler,
+            screen
         }}>
             {props.children}
         </Context.Provider>
