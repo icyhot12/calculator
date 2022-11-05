@@ -9,21 +9,37 @@ function ContextProvider(props) {
         number2: "",
         sign: "",
         result: "",
-        lastSign: ""
+        lastSign: "",
+        lastNumber: ""
     })
     const [signClicked, setSignClicked] = useState(false)
-    const [equalClicked, setEqualClicked] = useState(false)
     const [screen, setScreen] = useState("")
     const [actualEdit, setActualEdit] = useState("")
-    
-    const { number1, number2, result, sign } = calc
+    const [equalClicked, setEqualClicked] = useState(false)
+
+    const { number1, number2, result, sign, lastSign, lastNumber } = calc
+
+    useEffect(() => {
+        if (!signClicked) {
+            setScreen(clearValue(number1))
+            setActualEdit("number1")
+        } else if (signClicked && !equalClicked && number2.length < 1) {
+            setScreen(clearValue(number1))
+            setActualEdit("number1")
+        } else if (signClicked && !equalClicked) {
+            setScreen(clearValue(number2))
+            setActualEdit("number2")
+        } else if (equalClicked) {
+            setScreen(clearValue(result))
+        }
+    }, [signClicked, number1, number2, equalClicked, result])
 
     const resetClickHandler = () => {
         setCalc({
             number1: "0",
             number2: "",
             sign: "",
-            result: 0,
+            result: "",
             lastSign: "",
             lastNumber: ""
         })
@@ -32,43 +48,59 @@ function ContextProvider(props) {
     }
 
     const invertClickHandler = () => {
-        setCalc(prevCalc => ({...prevCalc, [actualEdit]: prevCalc[`${actualEdit}`]* (-1)}))
+        setCalc(prevCalc => ({ ...prevCalc, [actualEdit]: prevCalc[`${actualEdit}`] * (-1) }))
     }
     const percentClickHandler = () => {
-        setCalc(prevCalc => ({...prevCalc, [actualEdit]: prevCalc[`${actualEdit}`]* (0.01)}))
+        setCalc(prevCalc => ({ ...prevCalc, [actualEdit]: prevCalc[`${actualEdit}`] * (0.01) }))
     }
 
     const equalsClickHandler = () => {
         calculate(number1, number2, sign)
         setEqualClicked(true)
         setSignClicked(false)
+        if (number2.length > 0) {
+            setCalc(prevCalc => ({ ...prevCalc, lastNumber: prevCalc.number2 }))
+        } else if (number2.length === 0 && lastSign && lastNumber) {
+            calculate(number1, lastNumber, lastSign)
+        }
         setCalc(prevCalc => ({
             ...prevCalc,
             number1: prevCalc.result,
             number2: "",
             sign: "",
-
         }))
     }
-
-    // wykonywanie ostatniej operacji po równa się i ciagłe naciskania znaku
 
     const signClickHandler = (value) => {
         setSignClicked(true)
         setCalc(prevCalc => ({ ...prevCalc, sign: value, lastSign: value }))
         if (equalClicked) { setEqualClicked(false) }
+        if(number1 && number2 && sign){
+            calculate(number1,number2,sign)
+            setEqualClicked(true)
+            setSignClicked(false)
+            setCalc(prevCalc => ({
+                ...prevCalc,
+                number1: prevCalc.result,
+                number2: "",
+                sign: ""
+            }))
+        }
     }
-
+// niewłasciwe działanie przecinka !
     const commaClickHandler = () => {
-        if (!calc[`${actualEdit}`].includes(".")) {
+        console.log(actualEdit)
+        console.log(calc[`${actualEdit}`])
+        if (!actualEdit.includes(".")) {
+            console.log("coma")
             setCalc(prevCalc => ({ ...prevCalc, [actualEdit]: prevCalc[`${actualEdit}`].concat(".") }))
         }
     }
 
     const numClickHandler = (value) => {
-        if (!signClicked) {
+        if (!signClicked && !number2 && !result) {
             setCalc(prevCalc => ({ ...prevCalc, number1: prevCalc.number1 + value }))
-        } else {
+        } else if (signClicked && number1){
             setCalc(prevCalc => ({ ...prevCalc, number2: prevCalc.number2 + value }))
         }
     }
@@ -106,20 +138,6 @@ function ContextProvider(props) {
     }
 
 
-    useEffect(() => {
-        if (!signClicked) {
-            setScreen(clearValue(number1))
-            setActualEdit("number1")
-        } else if (signClicked && !equalClicked && number2.length < 1) {
-            setScreen(clearValue(number1))
-            setActualEdit("number1")
-        } else if (signClicked && !equalClicked) {
-            setScreen(clearValue(number2))
-            setActualEdit("number2")
-        } else if (equalClicked) {
-            setScreen(clearValue(result))
-        }
-    }, [calc])
 
 
     return (
