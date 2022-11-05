@@ -23,7 +23,7 @@ function App() {
 
   return (
     <div className='w-screen h-screen flex justify-center items-center'>
-      <div className='bg-gray-600 w-fit h-fit p-2 rounded-md'>
+      <div className='bg-gray-600 w-[268px] h-fit p-2 rounded-md'>
         <Screen />
         <div className='grid grid-rows-5 grid-cols-4 gap-1'>
           {elements}

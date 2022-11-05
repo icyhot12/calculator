@@ -1,25 +1,34 @@
-import { Result } from 'postcss'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Context } from '../appContext'
 
 function Screen() {
 
-    const { calc, signClicked, equalClicked } = React.useContext(Context)
+    const { calc, signClicked, equalClicked} = React.useContext(Context)
 
-    let screenValue = 0
+    const { number1, number2, result } = calc
 
-    if(!signClicked){
-        screenValue = calc.number1
+    // screen display behaviour
+    let tempScreen
+
+    if (!signClicked) {
+        tempScreen = number1
+    } else if (signClicked && !equalClicked && number2.length < 1) {
+        tempScreen = number1
     } else if (signClicked && !equalClicked) {
-        screenValue = calc.number2
+        tempScreen = number2
     } else if (equalClicked) {
-        screenValue = calc.result
+        tempScreen = result
     }
 
+    function clearValue(value){
+        let clearedValue = value.toString().replace(/^0+(?!\.|$)/, '').slice(0,9)
+        return clearedValue
+    }
+    
     return (
         <div className='text-white bg-slate-400 text-5xl py-3 px-2 mb-2 rounded-lg h-[72px]'>
-            {screenValue}
+            {clearValue(tempScreen)}
         </div>
     )
 }
