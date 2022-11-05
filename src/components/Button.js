@@ -8,7 +8,9 @@ function Button(props) {
         calc,
         setCalc,
         signClicked,
-        setSignClicked
+        setSignClicked,
+        equalClicked,
+        setEqualClicked
     } = React.useContext(Context)
 
     const resetClickHandler = () => {
@@ -19,6 +21,7 @@ function Button(props) {
             result: 0
         })
         setSignClicked(false)
+        setEqualClicked(false)
     }
     const invertClickHandler = () => {
         console.log("invert")
@@ -29,6 +32,7 @@ function Button(props) {
     const equalsClickHandler = () => {
         const { number1, number2, sign } = calc
         calculate(number1, number2, sign)
+        setEqualClicked(true)
     }
     const signClickHandler = (value) => {
         setSignClicked(true)
@@ -61,13 +65,9 @@ function Button(props) {
         console.log(calc)
     }
 
-    function showResult(value) {
-        setCalc(prevCalc => {
-            return ({ ...prevCalc, result: value })
-        })
-    }
 
     function calculate(a, b, sign) {
+
         let value1 = Number(a)
         let value2 = Number(b)
         let result = 0
@@ -87,6 +87,13 @@ function Button(props) {
             result = value1 - value2
             showResult(result)
         }
+
+    }
+
+    function showResult(value) {
+        setCalc(prevCalc => {
+            return ({ ...prevCalc, result: value })
+        })
     }
 
     return (

@@ -8,16 +8,19 @@ function ContextProvider(props) {
         number1: "",
         number2: "",
         sign: "",
-        result: 0
+        result: ""
     })
     const [signClicked, setSignClicked] = useState(false)
+    const [equalClicked, setEqualClicked] = useState(false)
 
     return (
         <Context.Provider value={{
             calc,
             setCalc,
             signClicked,
-            setSignClicked
+            setSignClicked,
+            equalClicked,
+            setEqualClicked
         }}>
             {props.children}
         </Context.Provider>
