@@ -8,34 +8,37 @@ function ContextProvider(props) {
         number1: "0",
         number2: "",
         sign: "",
-        result: ""
+        result: "",
+        lastSign: ""
     })
     const [signClicked, setSignClicked] = useState(false)
     const [equalClicked, setEqualClicked] = useState(false)
     const [screen, setScreen] = useState("")
+    const [actualEdit, setActualEdit] = useState("")
     
-    const { number1, number2, result } = calc
-    
+    const { number1, number2, result, sign } = calc
+
     const resetClickHandler = () => {
         setCalc({
             number1: "0",
             number2: "",
             sign: "",
-            result: 0
+            result: 0,
+            lastSign: "",
+            lastNumber: ""
         })
         setSignClicked(false)
         setEqualClicked(false)
     }
 
     const invertClickHandler = () => {
-        console.log("invert")
+        setCalc(prevCalc => ({...prevCalc, [actualEdit]: prevCalc[`${actualEdit}`]* (-1)}))
     }
     const percentClickHandler = () => {
-        console.log("percent")
+        setCalc(prevCalc => ({...prevCalc, [actualEdit]: prevCalc[`${actualEdit}`]* (0.01)}))
     }
 
     const equalsClickHandler = () => {
-        const { number1, number2, sign } = calc
         calculate(number1, number2, sign)
         setEqualClicked(true)
         setSignClicked(false)
@@ -43,19 +46,22 @@ function ContextProvider(props) {
             ...prevCalc,
             number1: prevCalc.result,
             number2: "",
-            sign: ""
+            sign: "",
+
         }))
     }
 
+    // wykonywanie ostatniej operacji po równa się i ciagłe naciskania znaku
+
     const signClickHandler = (value) => {
         setSignClicked(true)
-        setCalc(prevCalc => ({ ...prevCalc, sign: value }))
+        setCalc(prevCalc => ({ ...prevCalc, sign: value, lastSign: value }))
         if (equalClicked) { setEqualClicked(false) }
     }
 
     const commaClickHandler = () => {
-        if (!calc.number1.includes(".")) {
-            setCalc(prevCalc => ({ ...prevCalc, number1: prevCalc.number1.concat(".") }))
+        if (!calc[`${actualEdit}`].includes(".")) {
+            setCalc(prevCalc => ({ ...prevCalc, [actualEdit]: prevCalc[`${actualEdit}`].concat(".") }))
         }
     }
 
@@ -103,10 +109,13 @@ function ContextProvider(props) {
     useEffect(() => {
         if (!signClicked) {
             setScreen(clearValue(number1))
+            setActualEdit("number1")
         } else if (signClicked && !equalClicked && number2.length < 1) {
             setScreen(clearValue(number1))
+            setActualEdit("number1")
         } else if (signClicked && !equalClicked) {
             setScreen(clearValue(number2))
+            setActualEdit("number2")
         } else if (equalClicked) {
             setScreen(clearValue(result))
         }
