@@ -75,32 +75,34 @@ function ContextProvider(props) {
         setSignClicked(true)
         setCalc(prevCalc => ({ ...prevCalc, sign: value, lastSign: value }))
         if (equalClicked) { setEqualClicked(false) }
-        if(number1 && number2 && sign){
-            calculate(number1,number2,sign)
+        if (number1 && number2 && sign) {
+            calculate(number1, number2, sign)
             setEqualClicked(true)
             setSignClicked(false)
             setCalc(prevCalc => ({
                 ...prevCalc,
                 number1: prevCalc.result,
                 number2: "",
-                sign: ""
+                sign: "",
+                result: ""
             }))
         }
     }
-// niewłasciwe działanie przecinka !
+
     const commaClickHandler = () => {
-        console.log(actualEdit)
-        console.log(calc[`${actualEdit}`])
-        if (!actualEdit.includes(".")) {
-            console.log("coma")
-            setCalc(prevCalc => ({ ...prevCalc, [actualEdit]: prevCalc[`${actualEdit}`].concat(".") }))
+        if (!calc[`${actualEdit}`].toString().includes(".")) {
+            setCalc(prevCalc => {
+                let prevValue = prevCalc[`${actualEdit}`]
+                let dottedValue = "".concat(prevValue, ".")
+                return ({ ...prevCalc, [actualEdit]: dottedValue })
+            })
         }
     }
 
     const numClickHandler = (value) => {
-        if (!signClicked && !number2 && !result) {
+        if (!number2 && !result && !sign) {
             setCalc(prevCalc => ({ ...prevCalc, number1: prevCalc.number1 + value }))
-        } else if (signClicked && number1){
+        } else if (signClicked && number1) {
             setCalc(prevCalc => ({ ...prevCalc, number2: prevCalc.number2 + value }))
         }
     }
