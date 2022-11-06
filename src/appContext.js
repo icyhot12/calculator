@@ -42,7 +42,7 @@ function ContextProvider(props) {
             } else if (key === "Backspace" || key === "Delete") {
                 resetClickHandler()
             } else if (key === "+" || key === "-" || key === "/" || key === "*") {
-                signClickHandler("X")
+                signClickHandler()
             } else if (key === "." || key === ",") {
                 commaClickHandler()
             }
