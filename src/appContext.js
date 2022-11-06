@@ -34,6 +34,24 @@ function ContextProvider(props) {
         }
     }, [signClicked, number1, number2, equalClicked, result])
 
+    useEffect(() => {
+        const keyBoardhandler = (event) => {
+            const {key} = event
+            if(key && !isNaN(key)){
+                numClickHandler(key)
+            } else if (key === "Backspace" || key === "Delete") {
+                resetClickHandler()
+            } else if (key === "+" || key === "-" || key === "/" || key === "*") {
+                signClickHandler("X")
+            } else if (key === "." || key === ",") {
+                commaClickHandler()
+            }
+        }
+
+        window.addEventListener('keypress', keyBoardhandler)
+        return () => window.removeEventListener('keypress', keyBoardhandler)
+    }, [])
+
     const resetClickHandler = () => {
         setCalc({
             number1: "0",
@@ -100,9 +118,12 @@ function ContextProvider(props) {
     }
 
     const numClickHandler = (value) => {
+        console.log(sign)
         if (!number2 && !result && !sign) {
+            console.log("1")
             setCalc(prevCalc => ({ ...prevCalc, number1: prevCalc.number1 + value }))
         } else if (signClicked && number1) {
+            console.log("2")
             setCalc(prevCalc => ({ ...prevCalc, number2: prevCalc.number2 + value }))
         }
     }
@@ -113,7 +134,7 @@ function ContextProvider(props) {
         let value2 = Number(b)
         let result = 0
 
-        if (sign === "X") {
+        if (sign === "X" || sign === "*") {
             result = value1 * value2
             showResult(result)
         } else if (sign === "/" && value2 !== 0) {
@@ -131,6 +152,7 @@ function ContextProvider(props) {
     }
 
     function showResult(value) {
+        console.log("show result")
         setCalc(prevCalc => ({ ...prevCalc, result: value }))
     }
 
