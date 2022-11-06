@@ -38,7 +38,7 @@ function ContextProvider(props) {
         const {key} = event
         if(key && !isNaN(key)){
             numClickHandler(key)
-        } else if (key === "Backspace" || key === "Delete") {
+        } else if (key === "Backspace" || key === "Delete" || key === "Escape") {
             resetClickHandler()
         } else if (key === "+" || key === "-" || key === "*" || key === "/") {
             signClickHandler(key)
@@ -52,7 +52,7 @@ function ContextProvider(props) {
     useEffect(() => {
         window.addEventListener('keydown', keyBoardhandler)
         return () => window.removeEventListener('keydown', keyBoardhandler)
-    }, [number1, number2, sign])
+    })
 
     const resetClickHandler = () => {
         setCalc({
@@ -139,7 +139,7 @@ function ContextProvider(props) {
         } else if (sign === "/" && value2 !== 0) {
             result = value1 / value2
             showResult(result)
-        } else if (sign === "/") {
+        } else if (sign === "/" && value2 == 0) {
             showResult("/0 Error!")
         } else if (sign === "+") {
             result = value1 + value2
@@ -151,16 +151,15 @@ function ContextProvider(props) {
     }
 
     function showResult(value) {
-        setCalc(prevCalc => ({ ...prevCalc, result: value }))
+        !isNaN(value) ? 
+        setCalc(prevCalc => ({ ...prevCalc, result: value.toFixed(10)*1 })) :
+        setCalc(prevCalc => ({ ...prevCalc, result: value })) 
     }
 
     function clearValue(value) {
         let clearedValue = value.toString().replace(/^0+(?!\.|$)/, '').slice(0, 9)
         return clearedValue
     }
-
-
-
 
     return (
         <Context.Provider value={{
