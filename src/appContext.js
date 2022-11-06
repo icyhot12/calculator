@@ -34,23 +34,25 @@ function ContextProvider(props) {
         }
     }, [signClicked, number1, number2, equalClicked, result])
 
-    useEffect(() => {
-        const keyBoardhandler = (event) => {
-            const {key} = event
-            if(key && !isNaN(key)){
-                numClickHandler(key)
-            } else if (key === "Backspace" || key === "Delete") {
-                resetClickHandler()
-            } else if (key === "+" || key === "-" || key === "/" || key === "*") {
-                signClickHandler()
-            } else if (key === "." || key === ",") {
-                commaClickHandler()
-            }
+    const keyBoardhandler = (event) => {
+        const {key} = event
+        if(key && !isNaN(key)){
+            numClickHandler(key)
+        } else if (key === "Backspace" || key === "Delete") {
+            resetClickHandler()
+        } else if (key === "+" || key === "-" || key === "*" || key === "/") {
+            signClickHandler(key)
+        } else if (key === "." || key === ",") {
+            commaClickHandler()
+        } else if (key === "Enter") {
+            equalsClickHandler()
         }
+    }
 
-        window.addEventListener('keypress', keyBoardhandler)
-        return () => window.removeEventListener('keypress', keyBoardhandler)
-    }, [])
+    useEffect(() => {
+        window.addEventListener('keydown', keyBoardhandler)
+        return () => window.removeEventListener('keydown', keyBoardhandler)
+    }, [number1, number2, sign])
 
     const resetClickHandler = () => {
         setCalc({
@@ -118,12 +120,9 @@ function ContextProvider(props) {
     }
 
     const numClickHandler = (value) => {
-        console.log(sign)
         if (!number2 && !result && !sign) {
-            console.log("1")
             setCalc(prevCalc => ({ ...prevCalc, number1: prevCalc.number1 + value }))
         } else if (signClicked && number1) {
-            console.log("2")
             setCalc(prevCalc => ({ ...prevCalc, number2: prevCalc.number2 + value }))
         }
     }
@@ -152,7 +151,6 @@ function ContextProvider(props) {
     }
 
     function showResult(value) {
-        console.log("show result")
         setCalc(prevCalc => ({ ...prevCalc, result: value }))
     }
 
